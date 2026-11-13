@@ -1,0 +1,15 @@
+# docker compose up --build      then open http://localhost:6080/vnc.html
+# The container uses the host's network but keeps ROS 2 on loopback (ROS_LOCALHOST_ONLY=1), so
+# ROS 2 Humble on this machine sees the robot's topics once it sets ROS_LOCALHOST_ONLY=1 too.
+services:
+  husky:
+    build: .
+    image: ctrl-kit/husky-doosan:humble
+    container_name: husky-doosan
+    network_mode: host
+    ipc: host
+    environment:
+      - NOVNC_PORT=6080
+      - VNC_PORT=5900
+    volumes:
+      - ./examples:/root/examples

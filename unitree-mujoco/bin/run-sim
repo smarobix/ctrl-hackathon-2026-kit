@@ -1,0 +1,28 @@
+#!/bin/bash
+# Starts the simulated robot, with MuJoCo's viewer on the virtual desktop unless VIEWER=0.
+#   ROBOT   go2 (default) or g1; unitree_mujoco's other robots (h1, h1_2, h2, b2, ...) also run
+#   DOMAIN  DDS domain, 1 by default as in Unitree's simulators; real robots use 0
+#   IFACE   network interface, lo by default so the simulation stays on this machine
+#   STAND   1 (default): the Go2 stands up with Unitree's stand example; 0 leaves it lying
+# The robot side runs without any ROS environment, like the processes on the real robot.
+ROBOT="${ROBOT:-go2}"
+DOMAIN="${DOMAIN:-1}"
+IFACE="${IFACE:-lo}"
+VIEWER="${VIEWER:-1}"
+robot_env=(env -i HOME=/root PATH=/opt/unitree-venv/bin:/usr/bin:/bin
+  LD_LIBRARY_PATH=/opt/cyclonedds-0.10.2/lib CYCLONEDDS_HOME=/opt/cyclonedds-0.10.2
+  PYTHONPATH=/opt/kit/robot PYTHONUNBUFFERED=1)
+
+if [ "$VIEWER" = 1 ]; then
+  desktop &
+  sleep 2
+  robot_env+=(DISPLAY=:${DISPLAY_NUM:-2})
+  # Without a GPU in the container, the viewer draws with Mesa's software renderer.
+  [ -e /dev/dri ] || [ -n "$NVIDIA_VISIBLE_DEVICES" ] || robot_env+=(LIBGL_ALWAYS_SOFTWARE=1)
+fi
+
+if [ "$ROBOT" = go2 ] && [ "${STAND:-1}" = 1 ]; then
+  (sleep 5; exec "${robot_env[@]}" python /opt/kit/robot/stand_go2.py "$DOMAIN" "$IFACE" > /tmp/stand.log 2>&1) &
+fi
+
+exec "${robot_env[@]}" python /opt/kit/robot/sim.py "$ROBOT" "$DOMAIN" "$IFACE" "$VIEWER"

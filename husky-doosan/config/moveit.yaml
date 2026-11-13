@@ -1,0 +1,55 @@
+# MoveIt for the M1013 on the Husky. Joint limits for planning are Doosan's
+# (dsr_moveit_config_m1013); the URDF allows more on joints 2 and 3 than the real arm does.
+/**:
+  move_group:
+    ros__parameters:
+      planning_pipelines: [ompl]
+      default_planning_pipeline: ompl
+      ompl:
+        planning_plugin: ompl_interface/OMPLPlanner
+        request_adapters: >-
+          default_planner_request_adapters/AddTimeOptimalParameterization
+          default_planner_request_adapters/ResolveConstraintFrames
+          default_planner_request_adapters/FixWorkspaceBounds
+          default_planner_request_adapters/FixStartStateBounds
+          default_planner_request_adapters/FixStartStateCollision
+          default_planner_request_adapters/FixStartStatePathConstraints
+        start_state_max_bounds_error: 0.1
+        planner_configs:
+          RRTConnectkConfigDefault:
+            type: geometric::RRTConnect
+            range: 0.0
+        arm_0:
+          default_planner_config: RRTConnectkConfigDefault
+          planner_configs: [RRTConnectkConfigDefault]
+      robot_description_kinematics:
+        arm_0:
+          kinematics_solver: kdl_kinematics_plugin/KDLKinematicsPlugin
+          kinematics_solver_search_resolution: 0.005
+          kinematics_solver_timeout: 0.015
+      robot_description_planning:
+        default_velocity_scaling_factor: 0.3
+        default_acceleration_scaling_factor: 0.3
+        joint_limits:
+          arm_0_joint_1: {has_velocity_limits: true, max_velocity: 2.0944, has_acceleration_limits: true, max_acceleration: 2.0944, has_position_limits: true, min_position: -3.14, max_position: 3.14}
+          arm_0_joint_2: {has_velocity_limits: true, max_velocity: 2.0944, has_acceleration_limits: true, max_acceleration: 2.0944, has_position_limits: true, min_position: -1.6581, max_position: 1.6581}
+          arm_0_joint_3: {has_velocity_limits: true, max_velocity: 3.14, has_acceleration_limits: true, max_acceleration: 3.14, has_position_limits: true, min_position: -2.3562, max_position: 2.3562}
+          arm_0_joint_4: {has_velocity_limits: true, max_velocity: 3.927, has_acceleration_limits: true, max_acceleration: 3.927, has_position_limits: true, min_position: -3.14, max_position: 3.14}
+          arm_0_joint_5: {has_velocity_limits: true, max_velocity: 3.927, has_acceleration_limits: true, max_acceleration: 3.927, has_position_limits: true, min_position: -2.3562, max_position: 2.3562}
+          arm_0_joint_6: {has_velocity_limits: true, max_velocity: 3.927, has_acceleration_limits: true, max_acceleration: 3.927, has_position_limits: true, min_position: -3.14, max_position: 3.14}
+      moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
+      moveit_simple_controller_manager:
+        controller_names: [arm_0_joint_trajectory_controller]
+        arm_0_joint_trajectory_controller:
+          type: FollowJointTrajectory
+          action_ns: follow_joint_trajectory
+          default: true
+          joints: [arm_0_joint_1, arm_0_joint_2, arm_0_joint_3, arm_0_joint_4, arm_0_joint_5, arm_0_joint_6]
+      trajectory_execution:
+        allowed_execution_duration_scaling: 1.5
+        allowed_goal_duration_margin: 1.0
+      publish_planning_scene: true
+      publish_geometry_updates: true
+      publish_state_updates: true
+      publish_transforms_updates: true
+      publish_robot_description_semantic: true

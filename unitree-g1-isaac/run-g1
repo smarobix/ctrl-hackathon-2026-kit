@@ -1,0 +1,13 @@
+#!/bin/bash
+# Starts the G1 in Isaac Sim, streamed over WebRTC (Isaac Sim WebRTC Streaming Client, port 49100).
+#   TASK        Unitree's task name, default Isaac-PickPlace-Cylinder-G129-Dex1-Joint
+#   ROBOT_TYPE  g129 (default): G1 with 29 joints
+#   DDS_DOMAIN  1 (default), DDS_IFACE lo (default) keeps the simulation on this machine
+# Running Isaac Sim requires accepting NVIDIA's Isaac Sim license: OMNI_KIT_ACCEPT_EULA=YES.
+set -e
+[ "$OMNI_KIT_ACCEPT_EULA" = YES ] || { echo "Running Isaac Sim requires accepting NVIDIA's Isaac Sim license: set OMNI_KIT_ACCEPT_EULA=YES"; exit 1; }
+[ -d assets/robots ] || { echo "No assets: run the fetch step from the README first"; exit 1; }
+export DDS_DOMAIN="${DDS_DOMAIN:-1}" DDS_IFACE="${DDS_IFACE:-lo}"
+exec conda run --no-capture-output -n unitree_sim_env python sim_main.py \
+  --device cpu --enable_cameras --no_render \
+  --task "${TASK:-Isaac-PickPlace-Cylinder-G129-Dex1-Joint}" --enable_dex1_dds --robot_type "${ROBOT_TYPE:-g129}" "$@"

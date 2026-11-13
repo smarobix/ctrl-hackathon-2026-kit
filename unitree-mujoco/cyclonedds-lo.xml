@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Cyclone DDS for ROS 2 nodes that talk to the simulation on this machine: the loopback
+     interface, where run-sim puts the simulated robot. Set CYCLONEDDS_URI=file://<this file>. -->
+<CycloneDDS xmlns="https://cdds.io/config">
+  <Domain Id="any">
+    <General>
+      <Interfaces>
+        <NetworkInterface name="lo" priority="default" multicast="default"/>
+      </Interfaces>
+    </General>
+  </Domain>
+</CycloneDDS>

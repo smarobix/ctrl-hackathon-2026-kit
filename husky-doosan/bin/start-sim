@@ -1,0 +1,47 @@
+#!/bin/bash
+# Starts everything: the virtual desktop, Gazebo with the Husky and the arm, the arm's
+# trajectory controller, MoveIt, and RViz with the MotionPlanning panel. Logs go to /tmp/*.log.
+# The container keeps running as long as Gazebo does.
+set -e
+source /opt/ros/humble/setup.bash
+source /opt/doosan_ws/install/setup.bash
+NS=a200_0000
+SETUP=/root/clearpath
+
+# Clearpath writes its generated files next to robot.yaml, so it lives in a writable folder.
+mkdir -p "$SETUP"
+[ -f "$SETUP/robot.yaml" ] || cp /opt/kit/robot.yaml "$SETUP/robot.yaml"
+
+desktop &
+sleep 2
+export DISPLAY=:1
+# Without a GPU in the container, Gazebo and RViz draw with Mesa's software renderer.
+[ -e /dev/dri ] || [ -n "$NVIDIA_VISIBLE_DEVICES" ] || export LIBGL_ALWAYS_SOFTWARE=1
+
+ros2 launch clearpath_gz simulation.launch.py setup_path:="$SETUP" > /tmp/gazebo.log 2>&1 &
+GZ=$!
+
+CM=/$NS/controller_manager
+echo "waiting for the Husky's controller manager"
+until ros2 service list 2>/dev/null | grep -qx "$CM/list_controllers"; do
+  kill -0 $GZ 2>/dev/null || { echo "Gazebo exited, see /tmp/gazebo.log"; exit 1; }
+  sleep 2
+done
+# Clearpath's launch starts the Husky's controllers but gives up after 60 s. With the arm's meshes
+# and no GPU, Gazebo can take longer than that, so whatever it missed is started here.
+while pgrep -f "spawner .*platform_velocity_controller" >/dev/null; do sleep 2; done
+# The CLI colours its output, so the escape codes are removed before matching.
+active() { ros2 control list_controllers -c "$CM" 2>/dev/null | sed 's/\x1b\[[0-9;]*m//g' | grep -E "^$1([[:space:]]|\[)" | grep -qw active; }
+for controller in joint_state_broadcaster platform_velocity_controller; do
+  active $controller || ros2 run controller_manager spawner $controller -c "$CM" >> /tmp/controllers.log 2>&1
+done
+active arm_0_joint_trajectory_controller || ros2 run controller_manager spawner arm_0_joint_trajectory_controller \
+  -c "$CM" -t joint_trajectory_controller/JointTrajectoryController -p /opt/kit/config/arm_controller.yaml \
+  >> /tmp/controllers.log 2>&1
+
+ros2 launch /opt/kit/launch/moveit.launch.py setup_path:="$SETUP" namespace:=$NS > /tmp/moveit.log 2>&1 &
+sleep 5
+ros2 launch clearpath_viz view_moveit.launch.py namespace:=$NS use_sim_time:=True > /tmp/rviz.log 2>&1 &
+
+echo "simulation up: http://localhost:${NOVNC_PORT:-6080}/vnc.html"
+wait $GZ

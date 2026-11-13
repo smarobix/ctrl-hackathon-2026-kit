@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!-- The Doosan M1013 on the Husky's top plate. robot.yaml adds this file as a URDF extra. -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include filename="/opt/kit/urdf/doosan_m1013.xacro"/>
+  <xacro:doosan_m1013 prefix="arm_0_" parent_link="top_plate_default_mount">
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </xacro:doosan_m1013>
+</robot>

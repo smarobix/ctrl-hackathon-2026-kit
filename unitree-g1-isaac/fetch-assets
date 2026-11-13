@@ -1,0 +1,20 @@
+#!/bin/bash
+# Downloads Unitree's scene and robot assets for unitree_sim_isaaclab (about 3 GB to download,
+# 1.3 GB unpacked) into <folder>/assets. Unitree's fetch_assets.sh does the same, but stops at an
+# interactive unzip question when the archive repeats a file, so this one overwrites without asking.
+#
+#   fetch-assets [folder]     default: the current folder
+set -euo pipefail
+DATASET=https://huggingface.co/datasets/unitreerobotics/unitree_sim_isaaclab_usds
+# The dataset revision this kit was tested with; ASSETS_REVISION=main takes the latest.
+REVISION="${ASSETS_REVISION:-27b13d380531c0c6ea6ab109511ee4872594e271}"
+
+cd "${1:-.}"
+rm -rf unitree_sim_isaaclab_usds
+git lfs install --skip-repo >/dev/null
+git clone --no-checkout "$DATASET" unitree_sim_isaaclab_usds
+git -C unitree_sim_isaaclab_usds checkout -q "$REVISION"
+rm -rf assets
+unzip -q -o unitree_sim_isaaclab_usds/assets.zip
+rm -rf unitree_sim_isaaclab_usds
+echo "assets ready: $(du -sh assets | cut -f1) in $(pwd)/assets"

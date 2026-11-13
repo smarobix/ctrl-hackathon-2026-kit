@@ -1,0 +1,16 @@
+#!/bin/bash
+# A virtual desktop for the simulator window: X display :DISPLAY_NUM, VNC on VNC_PORT, and noVNC
+# on NOVNC_PORT, so a browser shows it at http://localhost:<NOVNC_PORT>/vnc.html. Neither asks for
+# a password, so both listen on this machine only; NOVNC_LISTEN=0.0.0.0 opens noVNC to the network.
+DISPLAY_NUM="${DISPLAY_NUM:-2}"
+VNC_PORT="${VNC_PORT:-5901}"
+NOVNC_PORT="${NOVNC_PORT:-6081}"
+NOVNC_LISTEN="${NOVNC_LISTEN:-127.0.0.1}"
+export DISPLAY=":$DISPLAY_NUM"
+# A container stopped by a reboot leaves the lock and socket behind, and Xvfb then refuses the display.
+rm -f "/tmp/.X$DISPLAY_NUM-lock" "/tmp/.X11-unix/X$DISPLAY_NUM"
+Xvfb "$DISPLAY" -screen 0 1600x900x24 >/tmp/xvfb.log 2>&1 &
+sleep 1
+fluxbox >/tmp/fluxbox.log 2>&1 &
+x11vnc -display "$DISPLAY" -forever -shared -nopw -localhost -rfbport "$VNC_PORT" -quiet >/tmp/x11vnc.log 2>&1 &
+exec websockify --web /usr/share/novnc "$NOVNC_LISTEN:$NOVNC_PORT" "localhost:$VNC_PORT" >/tmp/novnc.log 2>&1

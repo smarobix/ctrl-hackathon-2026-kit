@@ -1,0 +1,33 @@
+# docker compose up --build -d     then open http://localhost:6081/vnc.html
+# ROBOT=g1 docker compose up -d    for the humanoid
+#
+# robot  the simulated robot, Unitree's DDS only, no ROS
+# ros    ROS 2 Humble with Unitree's messages: docker compose exec ros bash
+# Both use the host's network; the simulation stays on the loopback interface, DDS domain 1.
+services:
+  robot:
+    build: .
+    image: ctrl-kit/unitree-mujoco:humble
+    container_name: unitree-robot
+    network_mode: host
+    ipc: host
+    environment:
+      - ROBOT=${ROBOT:-go2}
+      - DOMAIN=1
+      - IFACE=lo
+      - DISPLAY_NUM=2
+      - VNC_PORT=5901
+      - NOVNC_PORT=6081
+    command: run-sim
+  ros:
+    image: ctrl-kit/unitree-mujoco:humble
+    container_name: unitree-ros
+    network_mode: host
+    ipc: host
+    depends_on: [robot]
+    environment:
+      - ROS_DOMAIN_ID=1
+      - CYCLONEDDS_URI=file:///opt/kit/cyclonedds-lo.xml
+    volumes:
+      - ./examples:/root/examples
+    command: sleep infinity

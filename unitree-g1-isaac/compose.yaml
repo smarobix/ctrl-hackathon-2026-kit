@@ -1,0 +1,54 @@
+# ACCEPT_EULA=YES docker compose build        (accepts NVIDIA's Isaac Sim license)
+# HOST_UID=$(id -u) HOST_GID=$(id -g) docker compose run --rm fetch-assets   (once: Unitree's assets)
+# ACCEPT_EULA=YES docker compose up -d g1
+# The ROS 2 side is the image from ../unitree-mujoco: docker compose up -d ros, then
+# docker compose exec ros bash.
+services:
+  g1:
+    build:
+      context: .
+      args:
+        ACCEPT_EULA: ${ACCEPT_EULA:-}
+    image: ctrl-kit/unitree-g1-isaac:5.1
+    container_name: unitree-g1-isaac
+    network_mode: host
+    ipc: host
+    environment:
+      - OMNI_KIT_ACCEPT_EULA=${ACCEPT_EULA:-}
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      - VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/nvidia_icd.json
+      - DDS_DOMAIN=1
+      - DDS_IFACE=lo
+      - TASK=${TASK:-Isaac-PickPlace-Cylinder-G129-Dex1-Joint}
+      - ROBOT_TYPE=${ROBOT_TYPE:-g129}
+    volumes:
+      - ./data/assets:/home/code/unitree_sim_isaaclab/assets
+      - /usr/share/vulkan/icd.d:/usr/share/vulkan/icd.d:ro
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+  fetch-assets:
+    image: ctrl-kit/unitree-g1-isaac:5.1
+    profiles: [setup]
+    user: "${HOST_UID:-1000}:${HOST_GID:-1000}"
+    environment:
+      - HOME=/tmp
+    working_dir: /work
+    volumes:
+      - ./data:/work
+    command: fetch-assets /work
+  ros:
+    image: ctrl-kit/unitree-mujoco:humble
+    container_name: unitree-g1-ros
+    network_mode: host
+    ipc: host
+    environment:
+      - ROS_DOMAIN_ID=1
+      - CYCLONEDDS_URI=file:///opt/kit/cyclonedds-lo.xml
+    volumes:
+      - ../unitree-mujoco/examples:/root/examples
+    command: sleep infinity
