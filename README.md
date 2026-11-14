@@ -6,8 +6,8 @@ robots. Each folder is one simulation in Docker, built from the robot makers' ow
 
 | Folder | Robot | Simulator | Needs |
 |---|---|---|---|
-| [`husky-doosan/`](husky-doosan/) | Clearpath Husky A200 with a Doosan M1013 arm | Gazebo, ROS 2 Humble, ros2_control, MoveIt | Linux, Docker |
-| [`unitree-mujoco/`](unitree-mujoco/) | Unitree Go2 and Unitree G1 | MuJoCo on Unitree's DDS interface, ROS 2 Humble | Linux, Docker |
+| [`husky-gofa/`](husky-gofa/) | Clearpath Husky A200 with an ABB GoFa CRB 15000-12/1.27 arm | Gazebo, ROS 2 Humble, ros2_control, MoveIt | Linux, Docker |
+| [`unitree-mujoco/`](unitree-mujoco/) | Unitree B2 and Unitree G1 | MuJoCo on Unitree's DDS interface, ROS 2 Humble | Linux, Docker |
 | [`unitree-g1-isaac/`](unitree-g1-isaac/) | Unitree G1 with grippers at a pick-and-place table | NVIDIA Isaac Sim 5.1, Isaac Lab | Linux, Docker, NVIDIA RTX GPU |
 
 The first two run on any recent Linux laptop without a GPU. Isaac Sim needs an NVIDIA RTX card.
@@ -36,9 +36,9 @@ with the real robot, leave them out.
 
 These are starting points for trying code, not replicas of the event setup.
 
-- The real Husky's arm, gripper and sensors are still being decided. The kit uses the M1013 on the
-  top plate, with no gripper.
-- The Go2 simulation has Unitree's low-level interface (joint states and commands). Unitree's
+- The real Husky carries the GoFa CRB 15000-12/1.27. Where it sits, the gripper and the sensors
+  are still being decided. The kit puts the arm in the middle of the top plate, with no gripper.
+- The B2 simulation has Unitree's low-level interface (joint states and commands). Unitree's
   walking controller (the sport service behind `SportClient`) is not part of it.
 - The G1 in MuJoCo hangs from an elastic band, because there is no balance controller. In Isaac Sim,
   the default is Unitree's pick-and-place task for the G1's arms and grippers.
@@ -50,7 +50,7 @@ The files in this repository are copyright 2026 SMAROBIX GmbH, under the
 own licence:
 
 - Clearpath simulator: BSD-3-Clause.
-- Doosan doosan-robot2: BSD-3-Clause.
+- ROS-Industrial's abb_crb15000_support and abb_resources: Apache-2.0.
 - Unitree's unitree_mujoco, unitree_sdk2_python and unitree_ros2: BSD-3-Clause.
 - Unitree's unitree_sim_isaaclab: see its repository. Its assets on Hugging Face: Apache-2.0.
 - NVIDIA Isaac Sim and Isaac Lab: NVIDIA's licences. You accept Isaac Sim's licence when you build

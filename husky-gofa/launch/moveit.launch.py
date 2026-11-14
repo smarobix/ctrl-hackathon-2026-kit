@@ -1,9 +1,9 @@
-"""MoveIt's move_group for the M1013 on the Husky, in the robot's namespace.
+"""MoveIt's move_group for the GoFa on the Husky, in the robot's namespace.
 
 The robot description is the one Clearpath generated for the running simulation. The semantic
 description is written here: one planning group, arm_0, from the arm's base to its flange, and
 collision checks switched off where they can never matter (the Husky's parts among themselves,
-the arm's base and first link against the Husky, neighbouring arm links).
+the arm's base and first link against the Husky, arm links that never touch).
 """
 import itertools
 import os
@@ -19,14 +19,15 @@ ARM = "arm_0_"
 ARM_JOINTS = [f"{ARM}joint_{i}" for i in range(1, 7)]
 POSES = {
     "home": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
-    "ready": [0.0, 0.0, 1.5708, 0.0, 1.5708, 0.0],
-    "reach_front": [0.0, 0.7854, 1.5708, 0.0, 0.7854, 0.0],
+    "ready": [0.0, 0.0, 0.6, 0.0, 0.9708, 0.0],
+    "reach_front": [0.0, 0.9, 0.6, 0.0, 0.0708, 0.0],
 }
-# Doosan's own list of arm link pairs that never touch (dsr_moveit_config_m1013/config/dsr.srdf).
-ARM_PAIRS = [("base_link", "link_1"), ("base_link", "link_2"), ("link_1", "link_2"),
-             ("link_1", "link_3"), ("link_2", "link_3"), ("link_3", "link_4"),
-             ("link_3", "link_5"), ("link_3", "link_6"), ("link_4", "link_5"),
-             ("link_5", "link_6")]
+# Arm link pairs that never touch: neighbours, and pairs MoveIt's collisions_updater found never in
+# contact over 10000 random poses of the arm alone.
+ARM_PAIRS = [("base_link", "link_1"), ("base_link", "link_3"), ("link_1", "link_2"),
+             ("link_1", "link_3"), ("link_1", "link_4"), ("link_2", "link_3"),
+             ("link_3", "link_4"), ("link_3", "link_5"), ("link_3", "link_6"),
+             ("link_4", "link_5"), ("link_5", "link_6")]
 
 
 def semantic_description(urdf: str, robot_name: str) -> str:

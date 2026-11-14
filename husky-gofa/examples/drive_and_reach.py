@@ -16,9 +16,9 @@ from trajectory_msgs.msg import JointTrajectoryPoint
 
 NS = "/a200_0000"
 JOINTS = [f"arm_0_joint_{i}" for i in range(1, 7)]
-READY = [0.0, 0.0, 1.5708, 0.0, 1.5708, 0.0]
-REACH = [0.0, 0.7854, 1.5708, 0.0, 0.7854, 0.0]
-SIDE = [1.5708, 0.3, 1.8, 0.0, 1.0, 0.0]
+READY = [0.0, 0.0, 0.6, 0.0, 0.9708, 0.0]
+REACH = [0.0, 0.9, 0.6, 0.0, 0.0708, 0.0]
+SIDE = [1.5708, 0.5, 1.0, 0.0, 0.0708, 0.0]
 
 
 class DriveAndReach(Node):

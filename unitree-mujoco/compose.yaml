@@ -12,7 +12,7 @@ services:
     network_mode: host
     ipc: host
     environment:
-      - ROBOT=${ROBOT:-go2}
+      - ROBOT=${ROBOT:-b2}
       - DOMAIN=1
       - IFACE=lo
       - DISPLAY_NUM=2

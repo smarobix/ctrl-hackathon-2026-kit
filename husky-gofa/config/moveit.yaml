@@ -1,5 +1,6 @@
-# MoveIt for the M1013 on the Husky. Joint limits for planning are Doosan's
-# (dsr_moveit_config_m1013); the URDF allows more on joints 2 and 3 than the real arm does.
+# MoveIt for the GoFa on the Husky. Position and velocity limits are the ones in
+# abb_crb15000_support (from ABB's product manual). ABB does not publish acceleration limits, so
+# they are set to the velocity values.
 /**:
   move_group:
     ros__parameters:
@@ -31,12 +32,12 @@
         default_velocity_scaling_factor: 0.3
         default_acceleration_scaling_factor: 0.3
         joint_limits:
-          arm_0_joint_1: {has_velocity_limits: true, max_velocity: 2.0944, has_acceleration_limits: true, max_acceleration: 2.0944, has_position_limits: true, min_position: -3.14, max_position: 3.14}
-          arm_0_joint_2: {has_velocity_limits: true, max_velocity: 2.0944, has_acceleration_limits: true, max_acceleration: 2.0944, has_position_limits: true, min_position: -1.6581, max_position: 1.6581}
-          arm_0_joint_3: {has_velocity_limits: true, max_velocity: 3.14, has_acceleration_limits: true, max_acceleration: 3.14, has_position_limits: true, min_position: -2.3562, max_position: 2.3562}
-          arm_0_joint_4: {has_velocity_limits: true, max_velocity: 3.927, has_acceleration_limits: true, max_acceleration: 3.927, has_position_limits: true, min_position: -3.14, max_position: 3.14}
-          arm_0_joint_5: {has_velocity_limits: true, max_velocity: 3.927, has_acceleration_limits: true, max_acceleration: 3.927, has_position_limits: true, min_position: -2.3562, max_position: 2.3562}
-          arm_0_joint_6: {has_velocity_limits: true, max_velocity: 3.927, has_acceleration_limits: true, max_acceleration: 3.927, has_position_limits: true, min_position: -3.14, max_position: 3.14}
+          arm_0_joint_1: {has_velocity_limits: true, max_velocity: 2.0944, has_acceleration_limits: true, max_acceleration: 2.0944, has_position_limits: true, min_position: -4.7124, max_position: 4.7124}
+          arm_0_joint_2: {has_velocity_limits: true, max_velocity: 2.0944, has_acceleration_limits: true, max_acceleration: 2.0944, has_position_limits: true, min_position: -3.1416, max_position: 3.1416}
+          arm_0_joint_3: {has_velocity_limits: true, max_velocity: 2.1817, has_acceleration_limits: true, max_acceleration: 2.1817, has_position_limits: true, min_position: -3.927, max_position: 1.4835}
+          arm_0_joint_4: {has_velocity_limits: true, max_velocity: 3.4907, has_acceleration_limits: true, max_acceleration: 3.4907, has_position_limits: true, min_position: -3.1416, max_position: 3.1416}
+          arm_0_joint_5: {has_velocity_limits: true, max_velocity: 3.4907, has_acceleration_limits: true, max_acceleration: 3.4907, has_position_limits: true, min_position: -3.1416, max_position: 3.1416}
+          arm_0_joint_6: {has_velocity_limits: true, max_velocity: 3.4907, has_acceleration_limits: true, max_acceleration: 3.4907, has_position_limits: true, min_position: -4.7124, max_position: 4.7124}
       moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
       moveit_simple_controller_manager:
         controller_names: [arm_0_joint_trajectory_controller]

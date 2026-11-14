@@ -1,5 +1,5 @@
 # Clearpath configuration: a Husky A200 with bumpers and a top plate, as in Clearpath's
-# a200 samples. Clearpath's tools have no Doosan arm, so the M1013 comes in as a URDF extra;
+# a200 samples. Clearpath's tools have no ABB arm, so the GoFa comes in as a URDF extra;
 # its controller and MoveIt are started by start-sim.
 serial_number: a200-0000
 version: 0
@@ -21,4 +21,4 @@ platform:
       type: a200.top_plate
   extras:
     urdf:
-      path: /opt/kit/urdf/m1013_on_husky.urdf.xacro
+      path: /opt/kit/urdf/gofa_on_husky.urdf.xacro

@@ -4,8 +4,8 @@
 services:
   husky:
     build: .
-    image: ctrl-kit/husky-doosan:humble
-    container_name: husky-doosan
+    image: ctrl-kit/husky-gofa:humble
+    container_name: husky-gofa
     network_mode: host
     ipc: host
     environment:

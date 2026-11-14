@@ -1,6 +1,6 @@
 """Runs a Unitree robot from unitree_mujoco and serves its low-level interface on Unitree's DDS.
 
-The simulated robot publishes rt/lowstate (and, for the Go2, rt/sportmodestate) and follows
+The simulated robot publishes rt/lowstate (and, for the B2, rt/sportmodestate) and follows
 rt/lowcmd, through unitree_mujoco's own bridge, the way the real robot's low-level interface does.
 Humanoids hang from an elastic band so they do not fall before a controller takes over
 (viewer keys: 7 and 8 lower and raise the band, 9 releases it).

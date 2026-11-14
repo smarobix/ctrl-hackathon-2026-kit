@@ -4,7 +4,6 @@
 # The container keeps running as long as Gazebo does.
 set -e
 source /opt/ros/humble/setup.bash
-source /opt/doosan_ws/install/setup.bash
 NS=a200_0000
 SETUP=/root/clearpath
 

@@ -2,10 +2,10 @@
 """A ROS 2 node that reads the robot's low-level state and prints a summary once a second.
 
 The robot publishes rt/lowstate on Unitree's DDS; ROS 2 sees it as /lowstate, typed with the
-message packages from unitree_ros2 (unitree_go for the Go2, unitree_hg for the G1). Works the
+message packages from unitree_ros2 (unitree_go for the B2, unitree_hg for the G1). Works the
 same against the simulation and the real robot. A starting point, not a solution.
 
-    python3 watch_lowstate.py go2      or      python3 watch_lowstate.py g1
+    python3 watch_lowstate.py b2      or      python3 watch_lowstate.py g1
 """
 import math
 import sys
@@ -14,8 +14,8 @@ import rclpy
 from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
 
-ROBOT = sys.argv[1] if len(sys.argv) > 1 else "go2"
-if ROBOT == "go2":
+ROBOT = sys.argv[1] if len(sys.argv) > 1 else "b2"
+if ROBOT in ("b2", "go2"):
     from unitree_go.msg import LowState
 else:
     from unitree_hg.msg import LowState

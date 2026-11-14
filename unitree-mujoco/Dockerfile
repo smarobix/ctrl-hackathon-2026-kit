@@ -1,4 +1,4 @@
-# Unitree Go2 and G1 in MuJoCo (Unitree's unitree_mujoco), on Unitree's own DDS interface,
+# Unitree B2 and G1 in MuJoCo (Unitree's unitree_mujoco), on Unitree's own DDS interface,
 # plus ROS 2 with Unitree's message packages (unitree_ros2) to talk to them. No GPU needed.
 #
 # The robot side runs like the robot does: unitree_sdk2_python on Cyclone DDS 0.10.2, no ROS.
