@@ -8,6 +8,10 @@ services:
     container_name: husky-gofa
     network_mode: host
     ipc: host
+    # Capabilities and the host's PID namespace for observability tools inside the container,
+    # such as the SMAROBIX Insights probe: topic rates, the process behind each node, process exits.
+    cap_add: [BPF, PERFMON, SYS_ADMIN, SYS_PTRACE, NET_ADMIN]
+    pid: host
     environment:
       - NOVNC_PORT=6080
       - VNC_PORT=5900

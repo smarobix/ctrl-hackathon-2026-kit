@@ -7,9 +7,12 @@
 FROM ros:humble-ros-base
 SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive
+# rmw_fastrtps_dynamic_cpp lets tools such as the SMAROBIX Insights probe read ros2_control on
+# Humble.
 RUN apt-get update && apt-get install -y --no-install-recommends \
       ros-humble-clearpath-simulator ros-humble-clearpath-viz ros-humble-clearpath-config \
       ros-humble-moveit ros-humble-ros2controlcli ros-humble-rmw-cyclonedds-cpp git \
+      ros-humble-rmw-fastrtps-dynamic-cpp \
       xvfb x11vnc fluxbox novnc websockify xterm mesa-utils libgl1-mesa-dri \
     && rm -rf /var/lib/apt/lists/*
 

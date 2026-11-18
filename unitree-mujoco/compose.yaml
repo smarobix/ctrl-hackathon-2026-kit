@@ -11,6 +11,10 @@ services:
     container_name: unitree-robot
     network_mode: host
     ipc: host
+    # Capabilities and the host's PID namespace for observability tools inside the container,
+    # such as the SMAROBIX Insights probe: topic rates, the process behind each node, process exits.
+    cap_add: [BPF, PERFMON, SYS_ADMIN, SYS_PTRACE, NET_ADMIN]
+    pid: host
     environment:
       - ROBOT=${ROBOT:-b2}
       - DOMAIN=1
@@ -24,6 +28,10 @@ services:
     container_name: unitree-ros
     network_mode: host
     ipc: host
+    # Capabilities and the host's PID namespace for observability tools inside the container,
+    # such as the SMAROBIX Insights probe: topic rates, the process behind each node, process exits.
+    cap_add: [BPF, PERFMON, SYS_ADMIN, SYS_PTRACE, NET_ADMIN]
+    pid: host
     depends_on: [robot]
     environment:
       - ROS_DOMAIN_ID=1

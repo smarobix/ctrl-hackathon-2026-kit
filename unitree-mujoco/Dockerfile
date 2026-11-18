@@ -8,8 +8,11 @@ FROM ros:${ROS_DISTRO}-ros-base
 ARG ROS_DISTRO
 SHELL ["/bin/bash", "-c"]
 ENV DEBIAN_FRONTEND=noninteractive
+# rmw_fastrtps_dynamic_cpp lets tools such as the SMAROBIX Insights probe read ros2_control on
+# Humble.
 RUN apt-get update && apt-get install -y --no-install-recommends \
       ros-${ROS_DISTRO}-rmw-cyclonedds-cpp ros-${ROS_DISTRO}-rosidl-generator-dds-idl \
+      ros-${ROS_DISTRO}-rmw-fastrtps-dynamic-cpp \
       python3-venv python3-dev python3-pip python3-colcon-common-extensions build-essential cmake git \
       xvfb x11vnc fluxbox novnc websockify xterm libglfw3 libgl1 libegl1 libgl1-mesa-dri mesa-utils libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*

@@ -13,6 +13,10 @@ services:
     container_name: unitree-g1-isaac
     network_mode: host
     ipc: host
+    # Capabilities and the host's PID namespace for observability tools inside the container,
+    # such as the SMAROBIX Insights probe: topic rates, the process behind each node, process exits.
+    cap_add: [BPF, PERFMON, SYS_ADMIN, SYS_PTRACE, NET_ADMIN]
+    pid: host
     environment:
       - OMNI_KIT_ACCEPT_EULA=${ACCEPT_EULA:-}
       - NVIDIA_DRIVER_CAPABILITIES=all
@@ -46,6 +50,10 @@ services:
     container_name: unitree-g1-ros
     network_mode: host
     ipc: host
+    # Capabilities and the host's PID namespace for observability tools inside the container,
+    # such as the SMAROBIX Insights probe: topic rates, the process behind each node, process exits.
+    cap_add: [BPF, PERFMON, SYS_ADMIN, SYS_PTRACE, NET_ADMIN]
+    pid: host
     environment:
       - ROS_DOMAIN_ID=1
       - CYCLONEDDS_URI=file:///opt/kit/cyclonedds-lo.xml
