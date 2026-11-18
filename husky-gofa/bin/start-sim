@@ -11,9 +11,15 @@ SETUP=/root/clearpath
 mkdir -p "$SETUP"
 [ -f "$SETUP/robot.yaml" ] || cp /opt/kit/robot.yaml "$SETUP/robot.yaml"
 
+# The first X display the host does not use (see desktop), shared with desktop through DISPLAY_NUM.
+if [ -z "$DISPLAY_NUM" ]; then
+  DISPLAY_NUM=1
+  while grep -qE "@/tmp/\.X11-unix/X$DISPLAY_NUM\$" /proc/net/unix; do DISPLAY_NUM=$((DISPLAY_NUM + 1)); done
+fi
+export DISPLAY_NUM
 desktop &
 sleep 2
-export DISPLAY=:1
+export DISPLAY=":$DISPLAY_NUM"
 # Without a GPU in the container, Gazebo and RViz draw with Mesa's software renderer.
 [ -e /dev/dri ] || [ -n "$NVIDIA_VISIBLE_DEVICES" ] || export LIBGL_ALWAYS_SOFTWARE=1
 
