@@ -1,15 +1,22 @@
 #!/bin/bash
-# A virtual desktop for the simulator windows: X display :1, VNC on VNC_PORT, and noVNC on
-# NOVNC_PORT, so a browser shows it at http://localhost:<NOVNC_PORT>/vnc.html. Neither asks for a
-# password, so both listen on this machine only; NOVNC_LISTEN=0.0.0.0 opens noVNC to the network.
+# A virtual desktop for the simulator windows: X display :DISPLAY_NUM, VNC on VNC_PORT, and noVNC
+# on NOVNC_PORT, so a browser shows it at http://localhost:<NOVNC_PORT>/vnc.html. Neither asks for
+# a password, so both listen on this machine only; NOVNC_LISTEN=0.0.0.0 opens noVNC to the network.
+# The container shares the host's network, and with it the host's abstract X sockets: a laptop
+# with an X11 desktop on :1 makes Xvfb fail on :1. Without DISPLAY_NUM, the first free display
+# from :1 up is taken.
+if [ -z "$DISPLAY_NUM" ]; then
+  DISPLAY_NUM=1
+  while grep -qE "@/tmp/\.X11-unix/X$DISPLAY_NUM\$" /proc/net/unix; do DISPLAY_NUM=$((DISPLAY_NUM + 1)); done
+fi
 VNC_PORT="${VNC_PORT:-5900}"
 NOVNC_PORT="${NOVNC_PORT:-6080}"
 NOVNC_LISTEN="${NOVNC_LISTEN:-127.0.0.1}"
-export DISPLAY=:1
-# A container stopped by a reboot leaves the lock and socket behind, and Xvfb then refuses :1.
-rm -f /tmp/.X1-lock /tmp/.X11-unix/X1
-Xvfb :1 -screen 0 1600x900x24 >/tmp/xvfb.log 2>&1 &
+export DISPLAY=":$DISPLAY_NUM"
+# A container stopped by a reboot leaves the lock and socket behind, and Xvfb then refuses the display.
+rm -f "/tmp/.X$DISPLAY_NUM-lock" "/tmp/.X11-unix/X$DISPLAY_NUM"
+Xvfb "$DISPLAY" -screen 0 1600x900x24 >/tmp/xvfb.log 2>&1 &
 sleep 1
 fluxbox >/tmp/fluxbox.log 2>&1 &
-x11vnc -display :1 -forever -shared -nopw -localhost -rfbport "$VNC_PORT" -quiet >/tmp/x11vnc.log 2>&1 &
+x11vnc -display "$DISPLAY" -forever -shared -nopw -localhost -rfbport "$VNC_PORT" -quiet >/tmp/x11vnc.log 2>&1 &
 exec websockify --web /usr/share/novnc "$NOVNC_LISTEN:$NOVNC_PORT" "localhost:$VNC_PORT" >/tmp/novnc.log 2>&1
